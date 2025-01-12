@@ -1,0 +1,25 @@
+spring:
+  application:
+    name: kraken-bot
+
+kraken:
+  url: https://api.kraken.com
+
+operation:
+  pairs:
+    - SOLUSD
+    - XLMUSD
+    - XRPUSD
+    - NEARUSD
+    - FETUSD
+    - INJUSD
+    - RENDERUSD
+    - RAYUSD
+    - 1INCHUSD
+    - TRXUSD
+    - DENTUSD
+    - DOTUSD
+    - LINKUSD
+    - COMPUSD
+    - AAVEUSD
+    - MKRUSD
