@@ -1,3 +1,5 @@
+terraform/conf
+.idea
 .gradle
 **/build/
 !src/**/build/
