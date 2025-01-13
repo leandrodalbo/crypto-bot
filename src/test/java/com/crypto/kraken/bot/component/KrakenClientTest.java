@@ -1,0 +1,152 @@
+package com.crypto.kraken.bot.component;
+
+import com.crypto.kraken.bot.conf.MainConfProps;
+import com.crypto.kraken.bot.model.Balance;
+import com.crypto.kraken.bot.model.Candle;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import okhttp3.mockwebserver.MockResponse;
+import okhttp3.mockwebserver.MockWebServer;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.web.client.RestClient;
+
+import java.io.IOException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
+public class KrakenClientTest {
+
+    KrakenClient underTest;
+
+    ObjectMapper mapper = new ObjectMapper();
+    MainConfProps confProps = new MainConfProps("http://localhost:%s", "aB1zKa2jKRo+wVcE2XzIv5Y9CrIT1aB2cdU00weENSTapquQcLo8aRz4", "kQH5HW/8p1uGOVjbgWA7FunAmGO8lsSUXNsu3eow76sz84Q18fWxnyRzBHCd3pd5nE9qa99HAZtuZuj6F1huXg==");
+    private MockWebServer mockWebServer;
+
+    @BeforeEach
+    void setUp() throws IOException {
+        this.mockWebServer = new MockWebServer();
+        this.mockWebServer.start();
+
+        var restClient = RestClient.builder()
+                .baseUrl(String.format(confProps.url(),
+                        mockWebServer.getPort()))
+                .build();
+
+        this.underTest = new KrakenClient(restClient, confProps);
+    }
+
+    @AfterEach
+    void cleanUp() throws IOException {
+        this.mockWebServer.shutdown();
+    }
+
+    @Test
+    public void shouldFetchOHLCData() throws JsonProcessingException {
+        var mockResponse = new MockResponse()
+                .addHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                .setBody(mapper.writeValueAsString(Map.of(
+                        "error", new String[]{},
+                        "result", Map.of("BTCUSD", new Object[]{new Object[]{
+                                1688671200,
+                                "30306.1",
+                                "30306.2",
+                                "30305.7",
+                                "30305.7",
+                                "30306.1",
+                                "3.39243896",
+                                23}})
+                )));
+
+        mockWebServer.enqueue(mockResponse);
+
+        List data = underTest.ohlcData("BTCUSD", 60, Instant.now().minus(3, ChronoUnit.DAYS).toEpochMilli());
+
+        assertThat(data).isNotNull();
+        assertThat(data).isEqualTo(List.of(new Candle(30306.1F, 30306.2F, 30305.7F, 30305.7F, 3.39243896F)));
+    }
+
+    @Test
+    public void shouldHandleFailingResponseOnFetchOHLC() throws JsonProcessingException {
+        var mockResponse = new MockResponse()
+                .addHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                .setBody(mapper.writeValueAsString(Map.of(
+                        "error", new String[]{"failed"},
+                        "result", Map.of()
+                )));
+
+        mockWebServer.enqueue(mockResponse);
+
+        List result = underTest.ohlcData("BTCUSD", 60, Instant.now().minus(3, ChronoUnit.DAYS).toEpochMilli());
+
+        assertThat(result).isEmpty();
+    }
+
+    @Test
+    public void shouldHandleFailingResponseOnFetchBalance() throws JsonProcessingException, NoSuchAlgorithmException, InvalidKeyException {
+        var mockResponse = new MockResponse()
+                .addHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                .setBody(mapper.writeValueAsString(Map.of(
+                        "error", new String[]{"failed"},
+                        "result", Map.of()
+                )));
+
+        mockWebServer.enqueue(mockResponse);
+
+        Balance result = underTest.balance();
+
+        assertThat(result.balance().entrySet()).isEmpty();
+    }
+
+    @Test
+    public void shouldFetchBalance() throws JsonProcessingException, NoSuchAlgorithmException, InvalidKeyException {
+        var mockResponse = new MockResponse()
+                .addHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                .setBody(mapper.writeValueAsString(Map.of(
+                        "error", new String[]{},
+                        "result", Map.of("USD", "500.", "DOT", "35.3")
+                )));
+
+        mockWebServer.enqueue(mockResponse);
+
+        Balance result = underTest.balance();
+
+        assertThat(result.balance().get("USD")).isEqualTo(500.0F);
+        assertThat(result.balance().get("DOT")).isEqualTo(35.3F);
+    }
+
+    @Test
+    void WillGenerateSignature() throws NoSuchAlgorithmException, InvalidKeyException {
+        String pk = "kQH5HW/8p1uGOVjbgWA7FunAmGO8lsSUXNsu3eow76sz84Q18fWxnyRzBHCd3pd5nE9qa99HAZtuZuj6F1huXg==";
+        String nonce = "1616492376594";
+        String data = "nonce=1616492376594&ordertype=limit&pair=XBTUSD&price=37500&type=buy&volume=1.25";
+        String path = "/0/private/AddOrder";
+
+        assertThat(underTest.signature(pk, data, nonce, path)).isEqualTo("4/dpxb3iT4tp/ZCVEwSnEsLxx0bqyhLpdfOpc6fn7OR8+UClSV5n9E6aSS8MPtnRfp32bAb0nmbRn6H8ndwLUQ==");
+    }
+
+    @Test
+    void shouldEncodeData() {
+        Map<String, String> params = new HashMap<>();
+
+        params.put("nonce", "13242424243744");
+        params.put("ordertype", "market");
+        params.put("pair", "BTCUSDT");
+        params.put("type", "buy");
+        params.put("volume", "0.01");
+
+        String encoded = "volume=0.01&type=buy&nonce=13242424243744&pair=BTCUSDT&ordertype=market";
+
+        assertThat(underTest.postingData(params)).isEqualTo(encoded);
+    }
+}
