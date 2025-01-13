@@ -4,8 +4,8 @@ spring:
 
 kraken:
   url: https://api.kraken.com
-  key: aR3yJa2jKRo+wVcE2XzIv5K8CrHt0mT9dfU81wpUNSTapquQcLo8aXy5
-  secret: GKybFhwroUmJg52/eScOhgAXxw6Zh+PlvqUE/mBnoGtm4EL12rMsMD3Vl+Tqvk67eRurvClFfkqof0RJO/OgAA==
+  key: abc
+  secret: def
 
 operation:
   pairs:
