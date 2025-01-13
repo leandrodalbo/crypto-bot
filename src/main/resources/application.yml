@@ -4,6 +4,8 @@ spring:
 
 kraken:
   url: https://api.kraken.com
+  key: abc
+  secret: def
 
 operation:
   pairs:

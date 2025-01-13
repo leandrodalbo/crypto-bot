@@ -1,6 +1,8 @@
 package com.crypto.kraken.bot.service;
 
+import com.crypto.kraken.bot.component.KrakenClient;
 import com.crypto.kraken.bot.conf.OperationConf;
+import com.crypto.kraken.bot.model.Balance;
 import com.crypto.kraken.bot.model.Candle;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -8,6 +10,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -25,7 +29,7 @@ public class OperationServiceTest {
     OperationService underTest;
 
     @Mock
-    KrakenClientService krakenClient;
+    KrakenClient krakenClient;
 
     @Mock
     OperationConf conf;
@@ -39,5 +43,13 @@ public class OperationServiceTest {
 
         assertThat(tradingData.get("BTCUSD")).isNotNull();
         assertThat(tradingData.get("BTCUSD").size()).isEqualTo(1);
+    }
+
+    @Test void shouldReturnTradingAccountBalance() throws NoSuchAlgorithmException, InvalidKeyException {
+        when(krakenClient.balance()).thenReturn(new Balance(Map.of("USD", 343.4F)));
+
+        Balance result = underTest.getBalance();
+
+        assertThat(result.balance().get("USD")).isEqualTo(343.4F);
     }
 }
