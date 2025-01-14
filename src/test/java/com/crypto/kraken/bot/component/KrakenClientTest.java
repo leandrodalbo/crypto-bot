@@ -1,7 +1,11 @@
 package com.crypto.kraken.bot.component;
 
-import com.crypto.kraken.bot.conf.MainConfProps;
-import com.crypto.kraken.bot.model.*;
+import com.crypto.kraken.bot.conf.ClientProps;
+import com.crypto.kraken.bot.model.Candle;
+import com.crypto.kraken.bot.model.Balance;
+import com.crypto.kraken.bot.model.AssetPrice;
+import com.crypto.kraken.bot.model.TradingPair;
+import com.crypto.kraken.bot.model.BuySell;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import okhttp3.mockwebserver.MockResponse;
@@ -16,8 +20,7 @@ import org.springframework.web.client.RestClient;
 import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,7 +32,7 @@ public class KrakenClientTest {
     KrakenClient underTest;
 
     ObjectMapper mapper = new ObjectMapper();
-    MainConfProps confProps = new MainConfProps("http://localhost:%s", "aB1zKa2jKRo+wVcE2XzIv5Y9CrIT1aB2cdU00weENSTapquQcLo8aRz4", "kQH5HW/8p1uGOVjbgWA7FunAmGO8lsSUXNsu3eow76sz84Q18fWxnyRzBHCd3pd5nE9qa99HAZtuZuj6F1huXg==");
+    ClientProps confProps = new ClientProps("http://localhost:%s", "aB1zKa2jKRo+wVcE2XzIv5Y9CrIT1aB2cdU00weENSTapquQcLo8aRz4", "kQH5HW/8p1uGOVjbgWA7FunAmGO8lsSUXNsu3eow76sz84Q18fWxnyRzBHCd3pd5nE9qa99HAZtuZuj6F1huXg==", 60, 3);
     private MockWebServer mockWebServer;
 
     @BeforeEach
@@ -69,7 +72,7 @@ public class KrakenClientTest {
 
         mockWebServer.enqueue(mockResponse);
 
-        List data = underTest.ohlcData(new TradingPair("BTC", "USD"), 60, Instant.now().minus(3, ChronoUnit.DAYS).toEpochMilli());
+        List data = underTest.ohlcData(new TradingPair("BTC", "USD"));
 
         assertThat(data).isNotNull();
         assertThat(data).isEqualTo(List.of(new Candle(30306.1F, 30306.2F, 30305.7F, 30305.7F, 3.39243896F)));
@@ -86,7 +89,7 @@ public class KrakenClientTest {
 
         mockWebServer.enqueue(mockResponse);
 
-        List result = underTest.ohlcData(new TradingPair("BTC", "USD"), 60, Instant.now().minus(3, ChronoUnit.DAYS).toEpochMilli());
+        List result = underTest.ohlcData(new TradingPair("BTC", "USD"));
 
         assertThat(result).isEmpty();
     }

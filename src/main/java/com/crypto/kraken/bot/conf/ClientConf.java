@@ -7,10 +7,10 @@ import org.springframework.web.client.RestClient;
 
 @Configuration
 @ConfigurationPropertiesScan
-public class BotConf {
+public class ClientConf {
 
     @Bean
-    public RestClient restClient(RestClient.Builder builder, MainConfProps props) {
+    public RestClient restClient(RestClient.Builder builder, ClientProps props) {
         return builder.baseUrl(props.url()).build();
     }
 }

@@ -25,8 +25,6 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyDouble;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.times;
@@ -49,7 +47,7 @@ public class OperationServiceTest {
     @Test
     public void shouldFetchAllTradingPairsCandles() {
         when(conf.pairs()).thenReturn(Map.of("BTC", "USD"));
-        when(krakenClient.ohlcData(any(), anyInt(), anyLong())).thenReturn(List.of(new Candle(10f, 11f, 9f, 8.5f, 1234f)));
+        when(krakenClient.ohlcData(any())).thenReturn(List.of(new Candle(10f, 11f, 9f, 8.5f, 1234f)));
 
         Map<String, List<Candle>> tradingData = underTest.fetchCandles();
 

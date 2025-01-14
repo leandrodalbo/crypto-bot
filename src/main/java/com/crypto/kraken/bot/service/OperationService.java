@@ -44,7 +44,7 @@ public class OperationService {
                 .pairs()
                 .entrySet()
                 .stream().map(it -> new TradingPair(it.getKey(), it.getValue()))
-                .forEach(pair -> result.put(pair.toString(), krakenClient.ohlcData(pair, 60, Instant.now().minus(2, ChronoUnit.DAYS).toEpochMilli())));
+                .forEach(pair -> result.put(pair.toString(), krakenClient.ohlcData(pair)));
 
         return result;
     }
