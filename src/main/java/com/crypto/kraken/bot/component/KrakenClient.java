@@ -3,12 +3,13 @@ package com.crypto.kraken.bot.component;
 import com.crypto.kraken.bot.conf.MainConfProps;
 import com.crypto.kraken.bot.krakenResponse.KrakenBalanceResponse;
 import com.crypto.kraken.bot.krakenResponse.KrakenOHLCResponse;
+import com.crypto.kraken.bot.model.AssetPrice;
 import com.crypto.kraken.bot.model.Balance;
 import com.crypto.kraken.bot.model.Candle;
+import com.crypto.kraken.bot.model.TradingPair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -20,10 +21,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Base64;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Component
 public class KrakenClient {
@@ -34,6 +32,7 @@ public class KrakenClient {
 
     private static final String OHLC_PATH = "/0/public/OHLC";
     private static final String BALANCE_PATH = "/0/private/Balance";
+    private static final String PRICE_PATH = "/0/public/Ticker";
 
     private final RestClient client;
     private final MainConfProps props;
@@ -45,10 +44,10 @@ public class KrakenClient {
         this.props = props;
     }
 
-    public List ohlcData(String tradingPair, int interval, long since) {
+    public List ohlcData(TradingPair tradingPair, int interval, long since) {
         var response = client.get()
                 .uri(uriBuilder -> uriBuilder.path(OHLC_PATH)
-                        .queryParam("pair", tradingPair)
+                        .queryParam("pair", tradingPair.toString())
                         .queryParam("interval", interval)
                         .queryParam("since", since).build())
                 .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE)
@@ -138,9 +137,36 @@ public class KrakenClient {
     private Balance toBalance(KrakenBalanceResponse response) {
         Map<String, Float> balanceMap = new HashMap<>();
 
-        response.result().entrySet().forEach(it -> balanceMap.put(it.getKey(), Float.parseFloat(it.getValue())));
+        response.result().entrySet().forEach(it ->
+        {
+            float value = Float.parseFloat(it.getValue());
+            if(value > 0) balanceMap.put(it.getKey(), value);
+        });
 
         return new Balance(balanceMap);
     }
 
+    public AssetPrice assetPrice(TradingPair pair) {
+
+        var response = client.get()
+                .uri(uriBuilder -> uriBuilder.path(PRICE_PATH)
+                        .queryParam("pair", pair.toString()).build())
+                .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE)
+                .retrieve()
+                .body(Map.class);
+
+        if (((List)response.get("error")).size() > 0) {
+            logger.warn(((List<String>) response.get("error")).get(0));
+            return new AssetPrice("ERROR", -1f);
+        }
+
+        return toAsset(pair, (Map<String, List>) response.get("result"));
+    }
+
+    private AssetPrice toAsset(TradingPair pair, Map<String, List> result) {
+        Map pairMap = (Map) result.get(pair.toString());
+        List info = (List) pairMap.get("c");
+        return new AssetPrice(pair.key(),
+                Float.parseFloat((String) info.get(0)));
+    }
 }
