@@ -121,6 +121,10 @@ public class OperationService {
         }
     }
 
+    public Trade tradeStatus(){
+        return tradeWrapper.getTrade().orElse(new Trade(false, null, 0,0, Instant.now().toEpochMilli()));
+    }
+
     public boolean canOperate() {
         return tradeWrapper.canTrade();
     }
@@ -131,10 +135,5 @@ public class OperationService {
 
     private double formatDouble(double number) {
         return Double.parseDouble(String.format("%.3f", number));
-    }
-
-
-    public Trade tradeStatus(){
-        return tradeWrapper.getTrade().orElse(new Trade(false, null, 0,0, Instant.now().toEpochMilli()));
     }
 }
