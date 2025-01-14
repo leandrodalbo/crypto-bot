@@ -1,3 +1,5 @@
+# STILL BEING DEVELOPED
+
 # Crypto Trading Bot
 
 This project is designed to automate trading using Kraken API.
