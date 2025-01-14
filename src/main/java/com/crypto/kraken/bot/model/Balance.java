@@ -2,5 +2,5 @@ package com.crypto.kraken.bot.model;
 
 import java.util.Map;
 
-public record Balance(Map<String, Float> balance) {
+public record Balance(Map<String, Float> values) {
 }

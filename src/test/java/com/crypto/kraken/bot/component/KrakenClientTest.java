@@ -1,8 +1,7 @@
 package com.crypto.kraken.bot.component;
 
 import com.crypto.kraken.bot.conf.MainConfProps;
-import com.crypto.kraken.bot.model.Balance;
-import com.crypto.kraken.bot.model.Candle;
+import com.crypto.kraken.bot.model.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import okhttp3.mockwebserver.MockResponse;
@@ -70,7 +69,7 @@ public class KrakenClientTest {
 
         mockWebServer.enqueue(mockResponse);
 
-        List data = underTest.ohlcData("BTCUSD", 60, Instant.now().minus(3, ChronoUnit.DAYS).toEpochMilli());
+        List data = underTest.ohlcData(new TradingPair("BTC", "USD"), 60, Instant.now().minus(3, ChronoUnit.DAYS).toEpochMilli());
 
         assertThat(data).isNotNull();
         assertThat(data).isEqualTo(List.of(new Candle(30306.1F, 30306.2F, 30305.7F, 30305.7F, 3.39243896F)));
@@ -87,7 +86,7 @@ public class KrakenClientTest {
 
         mockWebServer.enqueue(mockResponse);
 
-        List result = underTest.ohlcData("BTCUSD", 60, Instant.now().minus(3, ChronoUnit.DAYS).toEpochMilli());
+        List result = underTest.ohlcData(new TradingPair("BTC", "USD"), 60, Instant.now().minus(3, ChronoUnit.DAYS).toEpochMilli());
 
         assertThat(result).isEmpty();
     }
@@ -105,7 +104,7 @@ public class KrakenClientTest {
 
         Balance result = underTest.balance();
 
-        assertThat(result.balance().entrySet()).isEmpty();
+        assertThat(result.values().entrySet()).isEmpty();
     }
 
     @Test
@@ -121,8 +120,73 @@ public class KrakenClientTest {
 
         Balance result = underTest.balance();
 
-        assertThat(result.balance().get("USD")).isEqualTo(500.0F);
-        assertThat(result.balance().get("DOT")).isEqualTo(35.3F);
+        assertThat(result.values().get("USD")).isEqualTo(500.0F);
+        assertThat(result.values().get("DOT")).isEqualTo(35.3F);
+    }
+
+    @Test
+    public void shouldFetchLastClosedPrice() throws JsonProcessingException {
+        var mockResponse = new MockResponse()
+                .addHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                .setBody(mapper.writeValueAsString(Map.of(
+                        "error", new String[]{},
+                        "result", Map.of("XXRPZUSD", Map.of("c", List.of("30303.20000",
+                                "0.00067643")))
+                )));
+
+        mockWebServer.enqueue(mockResponse);
+
+        AssetPrice result = underTest.assetPrice(new TradingPair("XXRP", "ZUSD"));
+
+        assertThat("XXRP").isEqualTo(result.name());
+        assertThat(30303.20000f).isEqualTo(result.usd());
+    }
+
+    @Test
+    public void shouldHandleFailingResponseOnFetchPrice() throws JsonProcessingException {
+        var mockResponse = new MockResponse()
+                .addHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                .setBody(mapper.writeValueAsString(Map.of(
+                        "error", new String[]{"failed"},
+                        "result", Map.of()
+                )));
+
+        mockWebServer.enqueue(mockResponse);
+
+        AssetPrice result = underTest.assetPrice(new TradingPair("BTC", "USD"));
+
+        assertThat(-1f).isEqualTo(result.usd());
+    }
+
+    @Test
+    public void shouldPostAMarketOrder() throws JsonProcessingException, NoSuchAlgorithmException, InvalidKeyException {
+        var mockResponse = new MockResponse()
+                .addHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                .setBody(mapper.writeValueAsString(Map.of(
+                        "error", new String[]{},
+                        "result", Map.of()
+                )));
+
+        mockWebServer.enqueue(mockResponse);
+
+
+        assertThat(underTest.postOrder(new TradingPair("TRX", "USD"), 34.4d, BuySell.buy)).isTrue();
+
+    }
+
+    @Test
+    public void shouldBeFalseWithAFailingMarketOrder() throws JsonProcessingException, NoSuchAlgorithmException, InvalidKeyException {
+        var mockResponse = new MockResponse()
+                .addHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                .setBody(mapper.writeValueAsString(Map.of(
+                        "error", new String[]{"failed"},
+                        "result", Map.of()
+                )));
+
+        mockWebServer.enqueue(mockResponse);
+
+        assertThat(underTest.postOrder(new TradingPair("TRX", "USD"), 34.4d, BuySell.buy)).isFalse();
+
     }
 
     @Test
@@ -149,4 +213,5 @@ public class KrakenClientTest {
 
         assertThat(underTest.postingData(params)).isEqualTo(encoded);
     }
+
 }

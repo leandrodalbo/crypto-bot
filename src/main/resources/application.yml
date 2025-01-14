@@ -8,20 +8,24 @@ kraken:
   secret: def
 
 operation:
+  minutesLimit: 90
+  stop: 0.006
+  profit: 0.018
+  currency: USDZ
+  notBelow: 100
   pairs:
-    - SOLUSD
-    - XLMUSD
-    - XRPUSD
-    - NEARUSD
-    - FETUSD
-    - INJUSD
-    - RENDERUSD
-    - RAYUSD
-    - 1INCHUSD
-    - TRXUSD
-    - DENTUSD
-    - DOTUSD
-    - LINKUSD
-    - COMPUSD
-    - AAVEUSD
-    - MKRUSD
+    XXLM: ZUSD
+    XXRP: ZUSD
+    NEAR: USD
+    FET: USD
+    INJ: USD
+    RENDER: USD
+    RAY: USD
+    1INCH: USD
+    TRX: USD
+    DENT: USD
+    DOT: USD
+    LINK: USD
+    COMP: USD
+    AAVE: USD
+    MKR: USD
