@@ -8,6 +8,11 @@ kraken:
   secret: def
 
 operation:
+  minutesLimit: 90
+  stop: 0.006
+  profit: 0.018
+  currency: USDZ
+  notBelow: 100
   pairs:
     XXLM: ZUSD
     XXRP: ZUSD

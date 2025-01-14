@@ -1,10 +1,7 @@
 package com.crypto.kraken.bot.component;
 
 import com.crypto.kraken.bot.conf.MainConfProps;
-import com.crypto.kraken.bot.model.AssetPrice;
-import com.crypto.kraken.bot.model.Balance;
-import com.crypto.kraken.bot.model.Candle;
-import com.crypto.kraken.bot.model.TradingPair;
+import com.crypto.kraken.bot.model.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import okhttp3.mockwebserver.MockResponse;
@@ -107,7 +104,7 @@ public class KrakenClientTest {
 
         Balance result = underTest.balance();
 
-        assertThat(result.balance().entrySet()).isEmpty();
+        assertThat(result.values().entrySet()).isEmpty();
     }
 
     @Test
@@ -123,8 +120,8 @@ public class KrakenClientTest {
 
         Balance result = underTest.balance();
 
-        assertThat(result.balance().get("USD")).isEqualTo(500.0F);
-        assertThat(result.balance().get("DOT")).isEqualTo(35.3F);
+        assertThat(result.values().get("USD")).isEqualTo(500.0F);
+        assertThat(result.values().get("DOT")).isEqualTo(35.3F);
     }
 
     @Test
@@ -162,6 +159,37 @@ public class KrakenClientTest {
     }
 
     @Test
+    public void shouldPostAMarketOrder() throws JsonProcessingException, NoSuchAlgorithmException, InvalidKeyException {
+        var mockResponse = new MockResponse()
+                .addHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                .setBody(mapper.writeValueAsString(Map.of(
+                        "error", new String[]{},
+                        "result", Map.of()
+                )));
+
+        mockWebServer.enqueue(mockResponse);
+
+
+        assertThat(underTest.postOrder(new TradingPair("TRX", "USD"), 34.4d, BuySell.buy)).isTrue();
+
+    }
+
+    @Test
+    public void shouldBeFalseWithAFailingMarketOrder() throws JsonProcessingException, NoSuchAlgorithmException, InvalidKeyException {
+        var mockResponse = new MockResponse()
+                .addHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                .setBody(mapper.writeValueAsString(Map.of(
+                        "error", new String[]{"failed"},
+                        "result", Map.of()
+                )));
+
+        mockWebServer.enqueue(mockResponse);
+
+        assertThat(underTest.postOrder(new TradingPair("TRX", "USD"), 34.4d, BuySell.buy)).isFalse();
+
+    }
+
+    @Test
     void WillGenerateSignature() throws NoSuchAlgorithmException, InvalidKeyException {
         String pk = "kQH5HW/8p1uGOVjbgWA7FunAmGO8lsSUXNsu3eow76sz84Q18fWxnyRzBHCd3pd5nE9qa99HAZtuZuj6F1huXg==";
         String nonce = "1616492376594";
@@ -185,4 +213,5 @@ public class KrakenClientTest {
 
         assertThat(underTest.postingData(params)).isEqualTo(encoded);
     }
+
 }

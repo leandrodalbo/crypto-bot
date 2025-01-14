@@ -22,6 +22,6 @@ public class StatusController {
 
     @GetMapping("/status")
     public BotStatus botStatus() throws NoSuchAlgorithmException, InvalidKeyException {
-        return new BotStatus(service.getBalance(), service.assetsPrice());
+        return new BotStatus(service.getBalance(), service.tradeStatus(), service.assetsPrice());
     }
 }
