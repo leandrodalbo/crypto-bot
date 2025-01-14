@@ -8,7 +8,7 @@ This project is designed to automate trading using Kraken API.
 
 - **Automated Trading**: Executes trades based on predefined strategies without manual intervention.
 - **Customizable Strategies**: Allows users choose between multiple strategies.
-- **Multi-Exchange Support**: Compatible with multiple cryptocurrency exchanges.
+
 
 ## Getting Started
 
