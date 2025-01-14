@@ -6,6 +6,9 @@ kraken:
   url: https://api.kraken.com
   key: abc
   secret: def
+  candlesInterval: 60
+  sinceDays: 2
+
 
 operation:
   minutesLimit: 90

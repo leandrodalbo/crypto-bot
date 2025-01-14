@@ -3,4 +3,4 @@ package com.crypto.kraken.bot.conf;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @ConfigurationProperties("kraken")
-public record MainConfProps(String url, String key, String secret) {}
+public record ClientProps(String url, String key, String secret, int candlesInterval, int sinceDays) {}

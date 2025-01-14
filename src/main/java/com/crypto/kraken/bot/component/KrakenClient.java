@@ -1,6 +1,6 @@
 package com.crypto.kraken.bot.component;
 
-import com.crypto.kraken.bot.conf.MainConfProps;
+import com.crypto.kraken.bot.conf.ClientProps;
 import com.crypto.kraken.bot.krakenResponse.KrakenBalanceResponse;
 import com.crypto.kraken.bot.krakenResponse.KrakenOHLCResponse;
 import com.crypto.kraken.bot.krakenResponse.KrakenOrderResponse;
@@ -23,6 +23,8 @@ import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
@@ -41,21 +43,21 @@ public class KrakenClient {
     private static final String ORDER_PATH = "/0/private/AddOrder";
 
     private final RestClient client;
-    private final MainConfProps props;
+    private final ClientProps props;
 
     private final Logger logger = LoggerFactory.getLogger(KrakenClient.class);
 
-    public KrakenClient(RestClient client, MainConfProps props) {
+    public KrakenClient(RestClient client, ClientProps props) {
         this.client = client;
         this.props = props;
     }
 
-    public List ohlcData(TradingPair tradingPair, int interval, long since) {
+    public List ohlcData(TradingPair tradingPair) {
         var response = client.get()
                 .uri(uriBuilder -> uriBuilder.path(OHLC_PATH)
                         .queryParam("pair", tradingPair.toString())
-                        .queryParam("interval", interval)
-                        .queryParam("since", since).build())
+                        .queryParam("interval", this.props.candlesInterval())
+                        .queryParam("since",  Instant.now().minus(props.sinceDays(), ChronoUnit.DAYS).toEpochMilli()).build())
                 .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE)
                 .retrieve()
                 .body(KrakenOHLCResponse.class);
