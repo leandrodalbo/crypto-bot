@@ -2,7 +2,7 @@ package com.crypto.kraken.bot.service;
 
 import com.crypto.kraken.bot.component.KrakenClient;
 import com.crypto.kraken.bot.component.TradeWrapper;
-import com.crypto.kraken.bot.conf.OperationConf;
+import com.crypto.kraken.bot.props.OperationProps;
 import com.crypto.kraken.bot.model.Trade;
 import com.crypto.kraken.bot.model.Candle;
 import com.crypto.kraken.bot.model.Balance;
@@ -39,7 +39,7 @@ public class OperationServiceTest {
     KrakenClient krakenClient;
 
     @Mock
-    OperationConf conf;
+    OperationProps conf;
 
     @Mock
     TradeWrapper tradeWrapper;

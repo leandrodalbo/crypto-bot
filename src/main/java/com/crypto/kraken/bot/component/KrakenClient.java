@@ -1,6 +1,6 @@
 package com.crypto.kraken.bot.component;
 
-import com.crypto.kraken.bot.conf.ClientProps;
+import com.crypto.kraken.bot.props.ClientProps;
 import com.crypto.kraken.bot.krakenResponse.KrakenBalanceResponse;
 import com.crypto.kraken.bot.krakenResponse.KrakenOHLCResponse;
 import com.crypto.kraken.bot.krakenResponse.KrakenOrderResponse;

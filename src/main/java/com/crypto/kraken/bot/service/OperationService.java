@@ -2,7 +2,7 @@ package com.crypto.kraken.bot.service;
 
 import com.crypto.kraken.bot.component.KrakenClient;
 import com.crypto.kraken.bot.component.TradeWrapper;
-import com.crypto.kraken.bot.conf.OperationConf;
+import com.crypto.kraken.bot.props.OperationProps;
 import com.crypto.kraken.bot.model.Trade;
 import com.crypto.kraken.bot.model.Candle;
 import com.crypto.kraken.bot.model.Balance;
@@ -27,11 +27,11 @@ import java.util.Optional;
 public class OperationService {
     private final Logger logger = LoggerFactory.getLogger(OperationService.class);
 
-    private final OperationConf operationConf;
+    private final OperationProps operationConf;
     private final KrakenClient krakenClient;
     private final TradeWrapper tradeWrapper;
 
-    public OperationService(OperationConf operationConf, KrakenClient krakenClient, TradeWrapper tradeWrapper) {
+    public OperationService(OperationProps operationConf, KrakenClient krakenClient, TradeWrapper tradeWrapper) {
         this.operationConf = operationConf;
         this.krakenClient = krakenClient;
         this.tradeWrapper = tradeWrapper;

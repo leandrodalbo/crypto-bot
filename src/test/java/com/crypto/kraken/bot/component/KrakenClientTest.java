@@ -1,6 +1,6 @@
 package com.crypto.kraken.bot.component;
 
-import com.crypto.kraken.bot.conf.ClientProps;
+import com.crypto.kraken.bot.props.ClientProps;
 import com.crypto.kraken.bot.model.Candle;
 import com.crypto.kraken.bot.model.Balance;
 import com.crypto.kraken.bot.model.AssetPrice;

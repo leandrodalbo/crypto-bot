@@ -1,4 +1,4 @@
-package com.crypto.kraken.bot.conf;
+package com.crypto.kraken.bot.props;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
