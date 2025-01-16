@@ -30,7 +30,7 @@ public class StatusControllerTest {
 
     @Test
     public void shouldFetchStatus() throws Exception {
-        when(service.getBalance()).thenReturn(new Balance(Map.of("USD", 343.4F)));
+        when(service.getBalance()).thenReturn(new Balance(Map.of("USD", 343.4)));
 
         var res = mvc.perform(get("/bot/status").contentType(MediaType.APPLICATION_JSON))
                 .andReturn().getResponse();

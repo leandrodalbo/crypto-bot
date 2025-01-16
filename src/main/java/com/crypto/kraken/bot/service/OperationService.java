@@ -23,6 +23,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import static com.crypto.kraken.bot.utils.BotUtils.botFormatDouble;
+
 @Service
 public class OperationService {
     private final Logger logger = LoggerFactory.getLogger(OperationService.class);
@@ -63,17 +65,18 @@ public class OperationService {
     public void openTrade(TradingPair pair) throws NoSuchAlgorithmException, InvalidKeyException {
         Balance balance = krakenClient.balance();
 
-        float usdBalance = formatFloat(balance.values().get(this.operationConf.currency()));
+        double usdBalance = balance.formattedValuesMap().get(this.operationConf.currency());
+        double notBelow = this.operationConf.formattedNotBelow();
 
-        if (tradeWrapper.canTrade() && usdBalance > formatFloat(this.operationConf.notBelow())) {
+        if (tradeWrapper.canTrade() && usdBalance > notBelow) {
             AssetPrice assetPrice = krakenClient.assetPrice(pair);
-            double volume = formatDouble(usdBalance / assetPrice.usd());
+            double volume = botFormatDouble(usdBalance / assetPrice.formattedUSD());
 
             if (krakenClient.postOrder(pair, volume, BuySell.buy)) {
-                float sl = formatFloat(assetPrice.usd() * (1 - this.operationConf.stop()));
-                float tp = formatFloat(assetPrice.usd() * (1 + this.operationConf.profit()));
+                double stopLoss = (assetPrice.formattedUSD() * (1 - this.operationConf.formattedStop()));
+                double takeProfit = (assetPrice.formattedUSD() * (1 + this.operationConf.formattedProfit()));
 
-                tradeWrapper.setTrade(Optional.of(new Trade(true, pair, sl, tp, Instant.now().toEpochMilli())));
+                tradeWrapper.setTrade(Optional.of(new Trade(true, pair, stopLoss, takeProfit, Instant.now().toEpochMilli())));
 
                 logger.info(String.format("Open Trade: %s", tradeWrapper.getTrade()));
 
@@ -88,7 +91,7 @@ public class OperationService {
             Balance balance = krakenClient.balance();
             Trade trade = tradeWrapper.getTrade().get();
 
-            double volume = formatDouble(balance.values().get(trade.pair().key()));
+            double volume = balance.formattedValuesMap().get(trade.pair().key());
 
             if (krakenClient.postOrder(trade.pair(), volume, BuySell.sell)) {
                 tradeWrapper.setTrade(Optional.empty());
@@ -105,35 +108,18 @@ public class OperationService {
             long limit = Instant.now().minus(this.operationConf.minutesLimit(), ChronoUnit.MINUTES).toEpochMilli();
             AssetPrice assetPrice = krakenClient.assetPrice(trade.pair());
 
-            float price = formatFloat(assetPrice.usd());
-
-            if (trade.timestamp() < limit) {
-                closeTrade();
-            }
-
-            if(price <= trade.stop()){
-                closeTrade();
-            }
-
-            if(price >= trade.profit()){
+            if ((trade.timestamp() < limit) || (assetPrice.formattedUSD() <= trade.formattedStop()) || (assetPrice.formattedUSD() >= trade.formattedProfit())) {
                 closeTrade();
             }
         }
     }
 
-    public Trade tradeStatus(){
-        return tradeWrapper.getTrade().orElse(new Trade(false, null, 0,0, Instant.now().toEpochMilli()));
+    public Trade tradeStatus() {
+        return tradeWrapper.getTrade().orElse(new Trade(false, null, 0, 0, Instant.now().toEpochMilli()));
     }
 
     public boolean canOperate() {
         return tradeWrapper.canTrade();
     }
 
-    private float formatFloat(float number) {
-        return Float.parseFloat(String.format("%.3f", number));
-    }
-
-    private double formatDouble(double number) {
-        return Double.parseDouble(String.format("%.3f", number));
-    }
 }

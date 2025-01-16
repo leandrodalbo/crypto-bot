@@ -7,6 +7,8 @@ import com.tictactec.ta.lib.MInteger;
 
 import java.util.Arrays;
 
+import static com.crypto.kraken.bot.utils.BotUtils.botFormatDouble;
+
 public class CoreWrapper {
     private final IndicatorProps props;
     private final Core core;
@@ -16,7 +18,7 @@ public class CoreWrapper {
         this.core = core;
     }
 
-    public boolean isBollingerBandsBuy(float assetPrice, float[] data) {
+    public boolean isBollingerBandsBuy(double assetPrice, double[] data) {
         double[] upperBand = new double[data.length];
         double[] middleBand = new double[data.length];
         double[] lowerBand = new double[data.length];
@@ -25,10 +27,10 @@ public class CoreWrapper {
 
         lowerBand = this.cleanUp(lowerBand);
 
-        return (((double) assetPrice) <= lowerBand[lowerBand.length - 1]);
+        return (botFormatDouble(assetPrice) <= botFormatDouble(lowerBand[lowerBand.length - 1]));
     }
 
-    public boolean isEMABuy(float[] data) {
+    public boolean isEMABuy(double[] data) {
         double[] shortValues = new double[data.length];
         double[] longValues = new double[data.length];
 
@@ -38,12 +40,12 @@ public class CoreWrapper {
         shortValues = this.cleanUp(shortValues);
         longValues = this.cleanUp(longValues);
 
-        return (shortValues[shortValues.length - 3] < longValues[longValues.length - 3] &&
-                shortValues[shortValues.length - 1] > longValues[longValues.length - 1]);
+        return (botFormatDouble(shortValues[shortValues.length - 3]) < botFormatDouble(longValues[longValues.length - 3]) &&
+                botFormatDouble(shortValues[shortValues.length - 1]) > botFormatDouble(longValues[longValues.length - 1]));
     }
 
 
-    public boolean isMACDBuy(float[] data) {
+    public boolean isMACDBuy(double[] data) {
 
         if (data.length < (props.macdSlow() + props.macdSignal())) {
             return false;
@@ -69,7 +71,7 @@ public class CoreWrapper {
         macd = this.cleanUp(macd);
         signal = this.cleanUp(signal);
 
-        return (macd[macd.length - 3] < signal[signal.length - 3] && macd[macd.length - 1] > signal[signal.length - 1]);
+        return (botFormatDouble(macd[macd.length - 3]) < botFormatDouble(signal[signal.length - 3]) && botFormatDouble(macd[macd.length - 1]) > botFormatDouble(signal[signal.length - 1]));
     }
 
     public double[] cleanUp(double[] values) {

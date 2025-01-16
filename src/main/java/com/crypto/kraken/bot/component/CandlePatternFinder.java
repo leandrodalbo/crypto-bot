@@ -13,9 +13,9 @@ public class CandlePatternFinder {
     }
 
     private boolean isBullishEngulfing(Candle previousCandle, Candle currentCandle) {
-        return previousCandle.close() < previousCandle.open() &&
-                currentCandle.close() > currentCandle.open() &&
-                currentCandle.open() < previousCandle.close() &&
-                currentCandle.close() > previousCandle.open();
+        return previousCandle.formattedClose() < previousCandle.formattedOpen() &&
+                currentCandle.formattedClose() > currentCandle.formattedOpen() &&
+                currentCandle.formattedOpen() < previousCandle.formattedClose() &&
+                currentCandle.formattedClose() > previousCandle.formattedOpen();
     }
 }

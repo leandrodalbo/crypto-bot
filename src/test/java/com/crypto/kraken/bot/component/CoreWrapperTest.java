@@ -15,7 +15,7 @@ public class CoreWrapperTest {
 
     @Test
     void willFindABuySignalUsingBollingerBands() {
-        float[] values = new float[]{31.4f, 25.1f, 35.2f, 33.4f, 28.1f, 24.2f, 25.1f, 28.3f, 32.9f, 73.4f,
+        double[] values = new double[]{31.4f, 25.1f, 35.2f, 33.4f, 28.1f, 24.2f, 25.1f, 28.3f, 32.9f, 73.4f,
                 11.1f, 44.2f, 55.1f, 31.3f, 33.4f, 61.1f, 44.2f, 45.1f, 21.3f, 22.9f,
                 33.4f, 31.1f, 44.2f, 55.1f, 61.3f, 22.9f, 23.1f, 71.2f, 6.1f, 43.4f,
                 21.1f, 44.2f, 25.1f, 21.3f, 23.4f, 21.1f, 44.2f, 45.1f, 71.3f};
@@ -27,7 +27,7 @@ public class CoreWrapperTest {
 
     @Test
     void willFindABuySignalUsingEMAs() {
-        float[] values = new float[]{31.4f, 25.1f, 35.2f, 33.4f, 28.1f, 24.2f, 25.1f, 28.3f, 32.9f, 73.4f,
+        double[] values = new double[]{31.4f, 25.1f, 35.2f, 33.4f, 28.1f, 24.2f, 25.1f, 28.3f, 32.9f, 73.4f,
                 11.1f, 44.2f, 55.1f, 31.3f, 33.4f, 61.1f, 44.2f, 45.1f, 21.3f, 22.9f,
                 33.4f, 31.1f, 44.2f, 55.1f, 61.3f, 22.9f, 23.1f, 71.2f, 6.1f, 43.4f,
                 21.1f, 44.2f, 25.1f, 21.3f, 23.4f, 21.1f, 44.2f, 45.1f, 71.3f};
@@ -39,7 +39,7 @@ public class CoreWrapperTest {
 
     @Test
     void willFindABuySignalUsingMACD() {
-        float[] values = new float[]{31.4f, 25.1f, 35.2f, 33.4f, 28.1f, 24.2f, 25.1f, 28.3f, 32.9f, 73.4f,
+        double[] values = new double[]{31.4f, 25.1f, 35.2f, 33.4f, 28.1f, 24.2f, 25.1f, 28.3f, 32.9f, 73.4f,
                 11.1f, 44.2f, 55.1f, 31.3f, 33.4f, 61.1f, 44.2f, 45.1f, 21.3f, 22.9f,
                 33.4f, 31.1f, 44.2f, 55.1f, 61.3f, 22.9f, 23.1f, 71.2f, 6.1f, 43.4f,
                 21.1f, 44.2f, 25.1f, 21.3f, 23.4f, 21.1f, 44.2f, 45.1f, 71.3f};

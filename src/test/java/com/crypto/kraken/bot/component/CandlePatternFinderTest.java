@@ -11,9 +11,9 @@ public class CandlePatternFinderTest {
     @Test
     void shouldFindABullishPatternBetweenTheFirstASecond() {
         Candle[] candles = new Candle[]{
-                new Candle(2f, 2.5f, 1.2f, 1.5f, 232.0f),
-                new Candle(1.4f, 3.0f, 1.2f, 2.1f, 232.0f),
-                new Candle(0.9f, 5.0f, 0.8f, 2.5f, 232.0f),
+                new Candle(2.0, 2.5, 1.2, 1.5, 232.0),
+                new Candle(1.4, 3.0, 1.2, 2.1, 232.0),
+                new Candle(0.9, 5.0, 0.8, 2.5, 232.0),
         };
         assertThat(finder.engulfingCandleBuy(candles)).isTrue();
     }
@@ -21,9 +21,9 @@ public class CandlePatternFinderTest {
     @Test
     void shouldFindABullishPatternBetweenTheSecondAndLast() {
         Candle[] candles = new Candle[]{
-                new Candle(1.1f, 2.2f, 1f, 1.0f, 232.0f),
-                new Candle(3.1f, 3.5f, 2.3f, 2.4f, 232.0f),
-                new Candle(2.1f, 3.4f, 1.9f, 3.2f, 232.0f),
+                new Candle(1.1, 2.2, 1.0, 1.0, 232.0),
+                new Candle(3.1, 3.5, 2.3, 2.4, 232.0),
+                new Candle(2.1, 3.4, 1.9, 3.2, 232.0),
         };
         assertThat(finder.engulfingCandleBuy(candles)).isTrue();
     }

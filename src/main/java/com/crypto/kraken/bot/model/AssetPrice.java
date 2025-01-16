@@ -1,3 +1,9 @@
 package com.crypto.kraken.bot.model;
 
-public record AssetPrice(String name, float usd) {}
+import static com.crypto.kraken.bot.utils.BotUtils.botFormatDouble;
+
+public record AssetPrice(String name, double usd) {
+    public double formattedUSD(){
+        return botFormatDouble(usd());
+    }
+}
