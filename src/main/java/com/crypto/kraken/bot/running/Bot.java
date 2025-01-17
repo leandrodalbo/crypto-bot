@@ -31,6 +31,7 @@ public class Bot {
     public void checkOpenTrade() {
         if (!operationService.canOperate()) {
             try {
+                logger.info("Trade Validation...");
                 operationService.validateTrade();
             } catch (Exception e) {
                 logger.warn(String.format("Trade Validation Failed: %s", e.getMessage()));
@@ -39,16 +40,23 @@ public class Bot {
         }
     }
 
-    @Scheduled(cron = "0 */30 * * * *") // Runs every 10 minutes
+    @Scheduled(cron = "0 */1 * * * *") // Runs every 10 minutes
     public void newTrade() {
         if (operationService.canOperate()) {
             try {
                 List<String> approvedToTrade = tradeApproved();
-                Random random = new Random();
 
-                String pairKey = approvedToTrade.get(random.nextInt(approvedToTrade.size()));
+                if (approvedToTrade.size() > 0){
+                    logger.info(String.format("Approved to trade %s ", approvedToTrade));
+                    Random random = new Random();
 
-                operationService.openTrade(pairKey);
+                    String pairKey = approvedToTrade.get(random.nextInt(approvedToTrade.size()));
+
+                    operationService.openTrade(pairKey);
+
+                }else {
+                    logger.info("No assets found to trade...");
+                }
 
             } catch (Exception e) {
                 logger.warn(String.format("Trade Opening Failed: %s", e.getMessage()));
@@ -68,13 +76,14 @@ public class Bot {
                     .stream()
                     .filter(price -> price.name().equals(it.getKey()))
                     .findFirst().get();
+
             Candle[] candles = BotUtils.toCandlesArray(it.getValue());
+
+            logger.info(String.format("analysis for %s ", it.getKey()));
 
             if (strategyService.isValidForTrade(assetPrice.formattedUSD(), candles)) {
                 result.add(it.getKey());
             }
-
-
         });
         return result;
     }
