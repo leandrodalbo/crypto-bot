@@ -27,7 +27,7 @@ public class Bot {
         this.operationService = operationService;
     }
 
-    @Scheduled(cron = "0 */3 * * * *") // Runs every 10 minutes
+    @Scheduled(cron = "0 */15 * * * *") // Runs every 10 minutes
     public void checkOpenTrade() {
         if (!operationService.canOperate()) {
             try {
@@ -39,7 +39,7 @@ public class Bot {
         }
     }
 
-    @Scheduled(cron = "0 */1 * * * *") // Runs every 10 minutes
+    @Scheduled(cron = "0 */30 * * * *") // Runs every 10 minutes
     public void newTrade() {
         if (operationService.canOperate()) {
             try {
