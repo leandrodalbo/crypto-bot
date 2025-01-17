@@ -4,11 +4,13 @@ import com.crypto.kraken.bot.props.IndicatorProps;
 import com.tictactec.ta.lib.Core;
 import com.tictactec.ta.lib.MAType;
 import com.tictactec.ta.lib.MInteger;
+import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 
 import static com.crypto.kraken.bot.utils.BotUtils.botFormatDouble;
 
+@Component
 public class CoreWrapper {
     private final IndicatorProps props;
     private final Core core;
