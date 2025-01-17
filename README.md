@@ -1,5 +1,3 @@
-# STILL BEING DEVELOPED
-
 # Crypto Trading Bot
 
 This project is designed to automate trading using Kraken API.
@@ -24,19 +22,15 @@ This project is designed to automate trading using Kraken API.
    cd crypto-bot
 ```
 
-2.**Custom configurations**:
+2. **Custom configurations**:
 
 ```yml
 kraken:
-  url: https://api.kraken.com
   key: abc
   secret: def
-  candlesInterval: 60
-  sinceDays: 2
-   
 ```
 
-3**Run Bot**:
+3. **Run Bot**:
 
 ```bash
     ./gradlew bootRun

@@ -87,7 +87,7 @@ public class OperationServiceTest {
         when(tradeWrapper.canTrade()).thenReturn(true);
         when(tradeWrapper.getTrade()).thenReturn(Optional.of(new Trade(true, new TradingPair("XXLM", "ZUSD"), 0, 0, Instant.now().toEpochMilli())));
 
-        underTest.openTrade(new TradingPair("XXLM", "ZUSD"));
+        underTest.openTrade("XXLM");
 
         verify(tradeWrapper, times(1)).setTrade(any());
         verify(krakenClient, times(1)).postOrder(any(), anyDouble(), any());

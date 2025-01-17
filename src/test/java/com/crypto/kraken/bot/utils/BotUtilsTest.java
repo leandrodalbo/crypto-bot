@@ -1,6 +1,9 @@
 package com.crypto.kraken.bot.utils;
 
+import com.crypto.kraken.bot.model.Candle;
 import org.junit.jupiter.api.Test;
+
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -12,4 +15,12 @@ public class BotUtilsTest {
         assertThat(3.57).isEqualTo(BotUtils.botFormatDouble(3.57));
         assertThat(3.576).isEqualTo(BotUtils.botFormatDouble(3.5760));
     }
+
+    @Test
+    public void willListOfCandlesToArray() {
+        Candle candle = new Candle(23.0, 28.0, 20.0, 22.0, 34343.0);
+
+        assertThat(new Candle[]{candle}).isEqualTo(BotUtils.toCandlesArray(List.of(candle)));
+    }
+
 }

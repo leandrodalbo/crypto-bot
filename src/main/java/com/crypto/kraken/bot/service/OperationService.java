@@ -62,11 +62,12 @@ public class OperationService {
                 .stream().map(it -> krakenClient.assetPrice(new TradingPair(it.getKey(), it.getValue()))).toList();
     }
 
-    public void openTrade(TradingPair pair) throws NoSuchAlgorithmException, InvalidKeyException {
+    public void openTrade(String pairKey) throws NoSuchAlgorithmException, InvalidKeyException {
         Balance balance = krakenClient.balance();
 
         double usdBalance = balance.formattedValuesMap().get(this.operationConf.currency());
         double notBelow = this.operationConf.formattedNotBelow();
+        TradingPair pair = new TradingPair(pairKey, this.operationConf.pairs().get(pairKey));
 
         if (tradeWrapper.canTrade() && usdBalance > notBelow) {
             AssetPrice assetPrice = krakenClient.assetPrice(pair);
