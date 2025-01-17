@@ -1,11 +1,7 @@
 package com.crypto.kraken.bot.component;
 
+import com.crypto.kraken.bot.model.*;
 import com.crypto.kraken.bot.props.ClientProps;
-import com.crypto.kraken.bot.model.Candle;
-import com.crypto.kraken.bot.model.Balance;
-import com.crypto.kraken.bot.model.AssetPrice;
-import com.crypto.kraken.bot.model.TradingPair;
-import com.crypto.kraken.bot.model.BuySell;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import okhttp3.mockwebserver.MockResponse;
@@ -32,7 +28,7 @@ public class KrakenClientTest {
     KrakenClient underTest;
 
     ObjectMapper mapper = new ObjectMapper();
-    ClientProps confProps = new ClientProps("http://localhost:%s", "aB1zKa2jKRo+wVcE2XzIv5Y9CrIT1aB2cdU00weENSTapquQcLo8aRz4", "kQH5HW/8p1uGOVjbgWA7FunAmGO8lsSUXNsu3eow76sz84Q18fWxnyRzBHCd3pd5nE9qa99HAZtuZuj6F1huXg==", 60, 3);
+    ClientProps confProps = new ClientProps("http://localhost:%s", "aB1zKa2jKRo+wVcE2XzIv5Y9CrIT1aB2cdU00weENSTapquQcLo8aRz4", "kQH5HW/8p1uGOVjbgWA7FunAmGO8lsSUXNsu3eow76sz84Q18fWxnyRzBHCd3pd5nE9qa99HAZtuZuj6F1huXg==", 60, 5, CandlesSinceUnit.day);
     private MockWebServer mockWebServer;
 
     @BeforeEach

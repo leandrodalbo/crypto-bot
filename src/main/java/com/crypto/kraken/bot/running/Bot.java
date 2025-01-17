@@ -7,7 +7,6 @@ import com.crypto.kraken.bot.service.StrategyService;
 import com.crypto.kraken.bot.utils.BotUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -27,7 +26,6 @@ public class Bot {
         this.operationService = operationService;
     }
 
-    @Scheduled(cron = "0 */15 * * * *") // Runs every 10 minutes
     public void checkOpenTrade() {
         if (!operationService.canOperate()) {
             try {
@@ -42,7 +40,6 @@ public class Bot {
         }
     }
 
-    @Scheduled(cron = "0 */30 * * * *") // Runs every 10 minutes
     public void newTrade() {
         if (operationService.canOperate()) {
             try {
@@ -80,10 +77,10 @@ public class Bot {
             Candle[] candles = BotUtils.toCandlesArray(it.getValue());
 
             if (strategyService.isValidForTrade(assetPrice.formattedUSD(), candles)) {
-                logger.info("Analysis for %s approved", it.getKey());
+                logger.info(String.format("Analysis for %s approved", it.getKey()));
                 result.add(it.getKey());
             } else {
-                logger.info("Analysis for %s not approved", it.getKey());
+                logger.info(String.format("Analysis for %s not approved", it.getKey()));
             }
         });
         return result;

@@ -1,14 +1,15 @@
 package com.crypto.kraken.bot.component;
 
+import com.crypto.kraken.bot.model.CandlesSinceUnit;
+import com.crypto.kraken.bot.model.Candle;
+import com.crypto.kraken.bot.model.AssetPrice;
+import com.crypto.kraken.bot.model.Balance;
+import com.crypto.kraken.bot.model.TradingPair;
+import com.crypto.kraken.bot.model.BuySell;
 import com.crypto.kraken.bot.props.ClientProps;
 import com.crypto.kraken.bot.krakenResponse.KrakenBalanceResponse;
 import com.crypto.kraken.bot.krakenResponse.KrakenOHLCResponse;
 import com.crypto.kraken.bot.krakenResponse.KrakenOrderResponse;
-import com.crypto.kraken.bot.model.Candle;
-import com.crypto.kraken.bot.model.Balance;
-import com.crypto.kraken.bot.model.AssetPrice;
-import com.crypto.kraken.bot.model.TradingPair;
-import com.crypto.kraken.bot.model.BuySell;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -57,7 +58,7 @@ public class KrakenClient {
                 .uri(uriBuilder -> uriBuilder.path(OHLC_PATH)
                         .queryParam("pair", tradingPair.toString())
                         .queryParam("interval", this.props.candlesInterval())
-                        .queryParam("since", Instant.now().minus(props.sinceDays(), ChronoUnit.DAYS).toEpochMilli()).build())
+                        .queryParam("since", ohlcSince()).build())
                 .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE)
                 .retrieve()
                 .body(KrakenOHLCResponse.class);
@@ -205,5 +206,12 @@ public class KrakenClient {
         List info = (List) pairMap.get("c");
         return new AssetPrice(pair.key(),
                 Double.parseDouble((String) info.get(0)));
+    }
+
+    private long ohlcSince() {
+        if (CandlesSinceUnit.day.equals(props.candlesSinceUnit())) {
+            return Instant.now().minus(props.candlesSince(), ChronoUnit.DAYS).toEpochMilli();
+        }
+        return Instant.now().minus(props.candlesSince(), ChronoUnit.MINUTES).toEpochMilli();
     }
 }
