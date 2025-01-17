@@ -1,13 +1,17 @@
 spring:
   application:
     name: kraken-bot
+bot:
+  validationCron: "0 */3 * * * *"
+  newTradeCron: "0 */15 * * * *"
 
 kraken:
   url: https://api.kraken.com
-  key: abc
-  secret: def
-  candlesInterval: 60
-  sinceDays: 2
+  key:
+  secret:
+  candlesInterval: 15
+  candlesSince: 2
+  candlesSinceUnit: DAY
 
 indicator:
   bbPeriod: 20
@@ -24,7 +28,7 @@ operation:
   stop: 0.006
   profit: 0.018
   currency: USDZ
-  notBelow: 100
+  notBelow: 500
   pairs:
     XXLM: ZUSD
     XXRP: ZUSD
@@ -41,3 +45,4 @@ operation:
     COMP: USD
     AAVE: USD
     MKR: USD
+    ENJ: USD
