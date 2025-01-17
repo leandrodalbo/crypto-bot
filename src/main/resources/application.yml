@@ -1,16 +1,16 @@
 spring:
   application:
-    name: kraken-bot
+    name: crypto-bot
 bot:
-  validationCron: "0 */3 * * * *"
-  newTradeCron: "0 */15 * * * *"
+  validationCron: "0 */15 * * * *"
+  newTradeCron: "0 */30 * * * *"
 
 kraken:
   url: https://api.kraken.com
   key:
-  secret:
-  candlesInterval: 15
-  candlesSince: 2
+  secret: 
+  candlesInterval: 60
+  candlesSince: 5
   candlesSinceUnit: DAY
 
 indicator:

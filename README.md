@@ -24,10 +24,46 @@ This project is designed to automate trading using Kraken API.
 
 2. **Custom configurations**:
 
+### 1 hour candles conf
 ```yml
+bot:
+  validationCron: "0 */15 * * * *"
+  newTradeCron: "0 */30 * * * *"
+  
 kraken:
   key: abc
   secret: def
+  candlesInterval: 60
+  candlesSince: 5
+  candlesSinceUnit: DAY
+
+operation:
+  minutesLimit: 90
+  stop: 0.006
+  profit: 0.018
+  currency: USDZ
+  notBelow: 500
+```
+
+### 15 min candles conf
+```yml
+bot:
+  validationCron: "0 */3 * * * *"
+  newTradeCron: "0 */15 * * * *"
+  
+kraken:
+  key: abc
+  secret: def
+  candlesInterval: 15
+  candlesSince: 2
+  candlesSinceUnit: DAY
+
+operation:
+  minutesLimit: 60
+  stop: 0.006
+  profit: 0.018
+  currency: USDZ
+  notBelow: 500
 ```
 
 3. **Run Bot**:
