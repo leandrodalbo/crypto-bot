@@ -80,10 +80,10 @@ public class Bot {
             Candle[] candles = BotUtils.toCandlesArray(it.getValue());
 
             if (strategyService.isValidForTrade(assetPrice.formattedUSD(), candles)) {
-                logger.info("Analysis for %s approved", it.getKey());
+                logger.info(String.format("Analysis for %s approved", it.getKey()));
                 result.add(it.getKey());
             } else {
-                logger.info("Analysis for %s not approved", it.getKey());
+                logger.info(String.format("Analysis for %s not approved", it.getKey()));
             }
         });
         return result;
