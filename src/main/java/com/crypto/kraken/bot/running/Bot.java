@@ -37,24 +37,24 @@ public class Bot {
                 logger.warn(String.format("Trade Validation Failed: %s", e.getMessage()));
             }
 
+        } else {
+            logger.info("No Trade  to Validate...");
         }
     }
 
-    @Scheduled(cron = "0 */1 * * * *") // Runs every 10 minutes
+    @Scheduled(cron = "0 */30 * * * *") // Runs every 10 minutes
     public void newTrade() {
         if (operationService.canOperate()) {
             try {
                 List<String> approvedToTrade = tradeApproved();
 
-                if (approvedToTrade.size() > 0){
-                    logger.info(String.format("Approved to trade %s ", approvedToTrade));
+                if (!approvedToTrade.isEmpty()) {
                     Random random = new Random();
-
-                    String pairKey = approvedToTrade.get(random.nextInt(approvedToTrade.size()));
+                   String pairKey = approvedToTrade.get(random.nextInt(approvedToTrade.size()));
 
                     operationService.openTrade(pairKey);
 
-                }else {
+                } else {
                     logger.info("No assets found to trade...");
                 }
 
@@ -79,10 +79,11 @@ public class Bot {
 
             Candle[] candles = BotUtils.toCandlesArray(it.getValue());
 
-            logger.info(String.format("analysis for %s ", it.getKey()));
-
             if (strategyService.isValidForTrade(assetPrice.formattedUSD(), candles)) {
+                logger.info("Analysis for %s approved", it.getKey());
                 result.add(it.getKey());
+            } else {
+                logger.info("Analysis for %s not approved", it.getKey());
             }
         });
         return result;
