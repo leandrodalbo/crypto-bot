@@ -1,7 +1,9 @@
 package com.crypto.kraken.bot.component;
 
 import com.crypto.kraken.bot.model.Candle;
+import org.springframework.stereotype.Component;
 
+@Component
 public class CandlePatternFinder {
 
     public boolean isEngulfingCandleBuy(Candle[] candles) {

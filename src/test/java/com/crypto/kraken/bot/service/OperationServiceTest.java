@@ -45,14 +45,14 @@ public class OperationServiceTest {
     TradeWrapper tradeWrapper;
 
     @Test
-    public void shouldFetchAllTradingPairsCandles() {
+    public void shouldFetchAllAssetCandles() {
         when(conf.pairs()).thenReturn(Map.of("BTC", "USD"));
         when(krakenClient.ohlcData(any())).thenReturn(List.of(new Candle(10.0, 11.0, 9.0, 8.5, 1234.0)));
 
         Map<String, List<Candle>> tradingData = underTest.fetchCandles();
 
-        assertThat(tradingData.get("BTCUSD")).isNotNull();
-        assertThat(tradingData.get("BTCUSD").size()).isEqualTo(1);
+        assertThat(tradingData.get("BTC")).isNotNull();
+        assertThat(tradingData.get("BTC").size()).isEqualTo(1);
     }
 
     @Test
@@ -87,7 +87,7 @@ public class OperationServiceTest {
         when(tradeWrapper.canTrade()).thenReturn(true);
         when(tradeWrapper.getTrade()).thenReturn(Optional.of(new Trade(true, new TradingPair("XXLM", "ZUSD"), 0, 0, Instant.now().toEpochMilli())));
 
-        underTest.openTrade(new TradingPair("XXLM", "ZUSD"));
+        underTest.openTrade("XXLM");
 
         verify(tradeWrapper, times(1)).setTrade(any());
         verify(krakenClient, times(1)).postOrder(any(), anyDouble(), any());

@@ -46,7 +46,7 @@ public class OperationService {
                 .pairs()
                 .entrySet()
                 .stream().map(it -> new TradingPair(it.getKey(), it.getValue()))
-                .forEach(pair -> result.put(pair.toString(), krakenClient.ohlcData(pair)));
+                .forEach(pair -> result.put(pair.key(), krakenClient.ohlcData(pair)));
 
         return result;
     }
@@ -62,11 +62,12 @@ public class OperationService {
                 .stream().map(it -> krakenClient.assetPrice(new TradingPair(it.getKey(), it.getValue()))).toList();
     }
 
-    public void openTrade(TradingPair pair) throws NoSuchAlgorithmException, InvalidKeyException {
+    public void openTrade(String pairKey) throws NoSuchAlgorithmException, InvalidKeyException {
         Balance balance = krakenClient.balance();
 
         double usdBalance = balance.formattedValuesMap().get(this.operationConf.currency());
         double notBelow = this.operationConf.formattedNotBelow();
+        TradingPair pair = new TradingPair(pairKey, this.operationConf.pairs().get(pairKey));
 
         if (tradeWrapper.canTrade() && usdBalance > notBelow) {
             AssetPrice assetPrice = krakenClient.assetPrice(pair);
@@ -93,9 +94,10 @@ public class OperationService {
 
             double volume = balance.formattedValuesMap().get(trade.pair().key());
 
+            logger.info(String.format("Closing Trade: %s", trade.pair().key()));
+
             if (krakenClient.postOrder(trade.pair(), volume, BuySell.sell)) {
                 tradeWrapper.setTrade(Optional.empty());
-                logger.info(String.format("Closed Trade: %s", trade));
             } else {
                 logger.warn(String.format("Failed to close trade for: %s", trade.pair()));
             }
@@ -110,6 +112,7 @@ public class OperationService {
 
             if ((trade.timestamp() < limit) || (assetPrice.formattedUSD() <= trade.formattedStop()) || (assetPrice.formattedUSD() >= trade.formattedProfit())) {
                 closeTrade();
+                logger.info(String.format("Closed Trade: %s", trade.pair().key()));
             }
         }
     }

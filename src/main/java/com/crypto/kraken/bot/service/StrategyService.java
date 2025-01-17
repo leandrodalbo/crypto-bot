@@ -3,9 +3,11 @@ package com.crypto.kraken.bot.service;
 import com.crypto.kraken.bot.component.CandlePatternFinder;
 import com.crypto.kraken.bot.component.CoreWrapper;
 import com.crypto.kraken.bot.model.Candle;
+import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
 
+@Service
 public class StrategyService {
 
     private final CoreWrapper coreWrapper;
