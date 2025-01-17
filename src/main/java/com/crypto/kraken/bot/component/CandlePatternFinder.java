@@ -4,7 +4,7 @@ import com.crypto.kraken.bot.model.Candle;
 
 public class CandlePatternFinder {
 
-    public boolean engulfingCandleBuy(Candle[] candles) {
+    public boolean isEngulfingCandleBuy(Candle[] candles) {
 
         if (candles.length < 3)
             return false;

@@ -36,7 +36,7 @@ kraken:
    
 ```
 
-1. **Run Bot**:
+3**Run Bot**:
 
 ```bash
     ./gradlew bootRun

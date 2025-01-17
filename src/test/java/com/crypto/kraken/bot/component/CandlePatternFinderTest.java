@@ -15,7 +15,7 @@ public class CandlePatternFinderTest {
                 new Candle(1.4, 3.0, 1.2, 2.1, 232.0),
                 new Candle(0.9, 5.0, 0.8, 2.5, 232.0),
         };
-        assertThat(finder.engulfingCandleBuy(candles)).isTrue();
+        assertThat(finder.isEngulfingCandleBuy(candles)).isTrue();
     }
 
     @Test
@@ -25,17 +25,17 @@ public class CandlePatternFinderTest {
                 new Candle(3.1, 3.5, 2.3, 2.4, 232.0),
                 new Candle(2.1, 3.4, 1.9, 3.2, 232.0),
         };
-        assertThat(finder.engulfingCandleBuy(candles)).isTrue();
+        assertThat(finder.isEngulfingCandleBuy(candles)).isTrue();
     }
 
 
     @Test
     void shouldBeFalseForNullCandles() {
-        assertThat(finder.engulfingCandleBuy(new Candle[2])).isFalse();
+        assertThat(finder.isEngulfingCandleBuy(new Candle[2])).isFalse();
     }
 
     @Test
     void shouldBeFalseForAnEmptyArray() {
-        assertThat(finder.engulfingCandleBuy(new Candle[0])).isFalse();
+        assertThat(finder.isEngulfingCandleBuy(new Candle[0])).isFalse();
     }
 }
