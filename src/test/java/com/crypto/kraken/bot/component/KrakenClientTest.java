@@ -1,6 +1,6 @@
 package com.crypto.kraken.bot.component;
 
-import com.crypto.kraken.bot.conf.ClientProps;
+import com.crypto.kraken.bot.props.ClientProps;
 import com.crypto.kraken.bot.model.Candle;
 import com.crypto.kraken.bot.model.Balance;
 import com.crypto.kraken.bot.model.AssetPrice;
@@ -75,7 +75,7 @@ public class KrakenClientTest {
         List data = underTest.ohlcData(new TradingPair("BTC", "USD"));
 
         assertThat(data).isNotNull();
-        assertThat(data).isEqualTo(List.of(new Candle(30306.1F, 30306.2F, 30305.7F, 30305.7F, 3.39243896F)));
+        assertThat(data).isEqualTo(List.of(new Candle(30306.1, 30306.2, 30305.7, 30305.7, 3.39243896)));
     }
 
     @Test
@@ -123,8 +123,8 @@ public class KrakenClientTest {
 
         Balance result = underTest.balance();
 
-        assertThat(result.values().get("USD")).isEqualTo(500.0F);
-        assertThat(result.values().get("DOT")).isEqualTo(35.3F);
+        assertThat(result.formattedValuesMap().get("USD")).isEqualTo(500.0);
+        assertThat((result.formattedValuesMap().get("DOT"))).isEqualTo(35.3);
     }
 
     @Test
@@ -142,7 +142,7 @@ public class KrakenClientTest {
         AssetPrice result = underTest.assetPrice(new TradingPair("XXRP", "ZUSD"));
 
         assertThat("XXRP").isEqualTo(result.name());
-        assertThat(30303.20000f).isEqualTo(result.usd());
+        assertThat(30303.2).isEqualTo(result.formattedUSD());
     }
 
     @Test
@@ -158,7 +158,7 @@ public class KrakenClientTest {
 
         AssetPrice result = underTest.assetPrice(new TradingPair("BTC", "USD"));
 
-        assertThat(-1f).isEqualTo(result.usd());
+        assertThat(-1.0).isEqualTo(result.formattedUSD());
     }
 
     @Test

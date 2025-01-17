@@ -7,8 +7,6 @@ This project is designed to automate trading using Kraken API.
 ## Features
 
 - **Automated Trading**: Executes trades based on predefined strategies without manual intervention.
-- **Customizable Strategies**: Allows users choose between multiple strategies.
-
 
 ## Getting Started
 
@@ -38,7 +36,7 @@ kraken:
    
 ```
 
-1. **Run Bot**:
+3**Run Bot**:
 
 ```bash
     ./gradlew bootRun

@@ -1,6 +1,6 @@
 package com.crypto.kraken.bot.component;
 
-import com.crypto.kraken.bot.conf.ClientProps;
+import com.crypto.kraken.bot.props.ClientProps;
 import com.crypto.kraken.bot.krakenResponse.KrakenBalanceResponse;
 import com.crypto.kraken.bot.krakenResponse.KrakenOHLCResponse;
 import com.crypto.kraken.bot.krakenResponse.KrakenOrderResponse;
@@ -57,7 +57,7 @@ public class KrakenClient {
                 .uri(uriBuilder -> uriBuilder.path(OHLC_PATH)
                         .queryParam("pair", tradingPair.toString())
                         .queryParam("interval", this.props.candlesInterval())
-                        .queryParam("since",  Instant.now().minus(props.sinceDays(), ChronoUnit.DAYS).toEpochMilli()).build())
+                        .queryParam("since", Instant.now().minus(props.sinceDays(), ChronoUnit.DAYS).toEpochMilli()).build())
                 .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE)
                 .retrieve()
                 .body(KrakenOHLCResponse.class);
@@ -103,7 +103,7 @@ public class KrakenClient {
                 .retrieve()
                 .body(Map.class);
 
-        if (((List)response.get("error")).size() > 0) {
+        if (((List) response.get("error")).size() > 0) {
             logger.warn(((List<String>) response.get("error")).get(0));
             return new AssetPrice("ERROR", -1f);
         }
@@ -183,18 +183,18 @@ public class KrakenClient {
 
         return data.stream().map(it -> {
             List candleData = (List) it;
-            return new Candle(Float.parseFloat((String) candleData.get(1)), Float.parseFloat((String) candleData.get(2))
-                    , Float.parseFloat((String) candleData.get(3)), Float.parseFloat((String) candleData.get(4)), Float.parseFloat((String) candleData.get(6)));
+            return new Candle(Double.parseDouble((String) candleData.get(1)), Double.parseDouble((String) candleData.get(2))
+                    , Double.parseDouble((String) candleData.get(3)), Double.parseDouble((String) candleData.get(4)), Double.parseDouble((String) candleData.get(6)));
         }).toList();
     }
 
     private Balance toBalance(KrakenBalanceResponse response) {
-        Map<String, Float> balanceMap = new HashMap<>();
+        Map<String, Double> balanceMap = new HashMap<>();
 
         response.result().entrySet().forEach(it ->
         {
-            float value = Float.parseFloat(it.getValue());
-            if(value > 0) balanceMap.put(it.getKey(), value);
+            double value = Double.parseDouble(it.getValue());
+            if (value > 0) balanceMap.put(it.getKey(), value);
         });
 
         return new Balance(balanceMap);
@@ -204,6 +204,6 @@ public class KrakenClient {
         Map pairMap = (Map) result.get(pair.toString());
         List info = (List) pairMap.get("c");
         return new AssetPrice(pair.key(),
-                Float.parseFloat((String) info.get(0)));
+                Double.parseDouble((String) info.get(0)));
     }
 }
