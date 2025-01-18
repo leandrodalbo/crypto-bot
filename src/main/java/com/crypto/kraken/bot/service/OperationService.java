@@ -65,15 +65,25 @@ public class OperationService {
     public void openTrade(String pairKey) throws NoSuchAlgorithmException, InvalidKeyException {
         Balance balance = krakenClient.balance();
 
-        double usdBalance = balance.formattedValuesMap().get(this.operationConf.currency());
-        double notBelow = this.operationConf.formattedNotBelow();
+        Double usdBalance = balance.formattedValuesMap().get(this.operationConf.currency());
+        Double notBelow = this.operationConf.formattedNotBelow();
+
+        if(this.operationConf.pairs().get(pairKey) == null){
+            logger.info("Pair Configuration missing");
+        }
+
+        if(usdBalance == null || notBelow == null){
+            logger.info("Currency or notBelow Parameters missing");
+        }
+
         TradingPair pair = new TradingPair(pairKey, this.operationConf.pairs().get(pairKey));
 
-        if (tradeWrapper.canTrade() && usdBalance > notBelow) {
+        if (tradeWrapper.canTrade() && usdBalance.doubleValue() > notBelow.doubleValue()) {
             AssetPrice assetPrice = krakenClient.assetPrice(pair);
             double volume = botFormatDouble(usdBalance / assetPrice.formattedUSD());
 
             if (krakenClient.postOrder(pair, volume, BuySell.buy)) {
+
                 double stopLoss = (assetPrice.formattedUSD() * (1 - this.operationConf.formattedStop()));
                 double takeProfit = (assetPrice.formattedUSD() * (1 + this.operationConf.formattedProfit()));
 

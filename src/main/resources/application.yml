@@ -2,13 +2,13 @@ spring:
   application:
     name: crypto-bot
 bot:
-  validationCron: "0 */15 * * * *"
-  newTradeCron: "0 */30 * * * *"
+  validationCron: "0 */5 * * * *"
+  newTradeCron: "0 */10 * * * *"
 
 kraken:
   url: https://api.kraken.com
   key:
-  secret: 
+  secret:
   candlesInterval: 60
   candlesSince: 5
   candlesSinceUnit: DAY
@@ -27,7 +27,7 @@ operation:
   minutesLimit: 90
   stop: 0.006
   profit: 0.018
-  currency: USDZ
+  currency: ZUSD
   notBelow: 500
   pairs:
     XXLM: ZUSD

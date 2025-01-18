@@ -127,7 +127,7 @@ public class KrakenClient {
         KrakenOrderResponse response = client.post()
                 .uri(uriBuilder -> uriBuilder.path(ORDER_PATH).build())
                 .header(API_KEY_HEADER, this.props.key())
-                .header(API_SIGN_HEADER, signature(this.props.secret(), data, nonce, BALANCE_PATH))
+                .header(API_SIGN_HEADER, signature(this.props.secret(), data, nonce, ORDER_PATH))
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE)
                 .body(data)
