@@ -82,7 +82,7 @@ public class OperationService {
             AssetPrice assetPrice = krakenClient.assetPrice(pair);
             double canbuy = botFormatDouble(usdBalance / assetPrice.formattedUSD());
             double volume = canbuy - (canbuy * 0.10);
-            
+
             if (krakenClient.postOrder(pair, volume, BuySell.buy)) {
 
                 double stopLoss = (assetPrice.formattedUSD() * (1 - this.operationConf.formattedStop()));
