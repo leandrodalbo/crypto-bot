@@ -3,7 +3,7 @@ spring:
     name: crypto-bot
 bot:
   validationCron: "0 */5 * * * *"
-  newTradeCron: "0 */10 * * * *"
+  newTradeCron: "0 */15 * * * *"
 
 kraken:
   url: https://api.kraken.com
