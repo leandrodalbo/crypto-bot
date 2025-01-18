@@ -69,11 +69,11 @@ public class OperationService {
         Double usdBalance = balance.formattedValuesMap().get(this.operationConf.currency());
         Double notBelow = this.operationConf.formattedNotBelow();
 
-        if(this.operationConf.pairs().get(pairKey) == null){
+        if (this.operationConf.pairs().get(pairKey) == null) {
             logger.info("Pair Configuration missing");
         }
 
-        if(usdBalance == null || notBelow == null){
+        if (usdBalance == null || notBelow == null) {
             logger.info("Currency or notBelow Parameters missing");
         }
 
@@ -104,15 +104,21 @@ public class OperationService {
             Balance balance = apiClient.balance();
             Trade trade = tradeWrapper.getTrade().get();
 
-            double volume = balance.formattedValuesMap().get(trade.pair().key());
-
             logger.info(String.format("Closing Trade: %s", trade.pair().key()));
 
-            if (apiClient.postOrder(trade.pair(), volume, BuySell.sell)) {
-                tradeWrapper.setTrade(Optional.empty());
+            Double volume = balance.formattedValuesMap().get(trade.pair().key());
+
+            if (volume == null) {
+                logger.warn(String.format("Failed to obtain balance volume for %s", trade.pair().key()));
             } else {
-                logger.warn(String.format("Failed to close trade for: %s", trade.pair()));
+
+                if (apiClient.postOrder(trade.pair(), volume, BuySell.sell)) {
+                    tradeWrapper.setTrade(Optional.empty());
+                } else {
+                    logger.warn(String.format("Failed to close trade for: %s", trade.pair()));
+                }
             }
+
         }
     }
 
