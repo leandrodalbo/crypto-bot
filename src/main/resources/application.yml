@@ -29,6 +29,7 @@ operation:
   profit: 0.018  #take profit
   currency: ZUSD
   notBelow: 500  #don't trade below
+  operationFee: 0.0026
   pairs:
     XXLM: ZUSD
     XXRP: ZUSD
