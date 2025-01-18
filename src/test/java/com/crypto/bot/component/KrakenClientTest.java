@@ -1,7 +1,11 @@
 package com.crypto.bot.component;
 
-import com.crypto.bot.model.*;
-import com.crypto.kraken.bot.model.*;
+import com.crypto.bot.model.Balance;
+import com.crypto.bot.model.TradingPair;
+import com.crypto.bot.model.Candle;
+import com.crypto.bot.model.AssetPrice;
+import com.crypto.bot.model.BuySell;
+import com.crypto.bot.model.CandlesSinceUnit;
 import com.crypto.bot.props.ClientProps;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
