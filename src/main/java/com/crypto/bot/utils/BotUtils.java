@@ -17,4 +17,9 @@ public class BotUtils {
         }
         return result;
     }
+
+    public static String formatBalanceKey(String key)
+    {
+        return  key.contains(".") ? key.split("\\.")[0] : key;
+    }
 }

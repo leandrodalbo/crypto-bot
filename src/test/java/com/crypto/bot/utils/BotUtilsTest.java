@@ -23,4 +23,9 @@ public class BotUtilsTest {
         assertThat(new Candle[]{candle}).isEqualTo(BotUtils.toCandlesArray(List.of(candle)));
     }
 
+    @Test
+    public void shouldFormatBalanceKey() {
+        assertThat("TRX").isEqualTo(BotUtils.formatBalanceKey("TRX.F"));
+    }
+
 }

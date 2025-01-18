@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static com.crypto.bot.utils.BotUtils.botFormatDouble;
+import static com.crypto.bot.utils.BotUtils.formatBalanceKey;
 
 public record Balance(Map<String, Double> values) {
 
@@ -12,7 +13,7 @@ public record Balance(Map<String, Double> values) {
 
         this.values()
                 .entrySet()
-                .forEach(it -> result.put(it.getKey(), botFormatDouble(it.getValue())));
+                .forEach(it -> result.put(formatBalanceKey(it.getKey()), botFormatDouble(it.getValue())));
 
         return result;
     }

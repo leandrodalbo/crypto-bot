@@ -32,7 +32,7 @@ import java.util.HashMap;
 import java.util.Base64;
 
 @Component
-public class KrakenClient {
+public class KrakenClient implements ApiClient {
     private static final String API_KEY_HEADER = "API-Key";
     private static final String API_SIGN_HEADER = "API-Sign";
     private static final String SHA_256 = "SHA-256";
@@ -71,6 +71,7 @@ public class KrakenClient {
         return toCandlesList(response);
     }
 
+    @Override
     public Balance balance() throws NoSuchAlgorithmException, InvalidKeyException {
         String nonce = String.valueOf(System.currentTimeMillis());
         Map<String, String> params = new HashMap<>();
@@ -214,4 +215,7 @@ public class KrakenClient {
         }
         return Instant.now().minus(props.candlesSince(), ChronoUnit.MINUTES).toEpochMilli();
     }
+
+
+
 }

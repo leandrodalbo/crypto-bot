@@ -1,6 +1,5 @@
 package com.crypto.bot.controller;
 
-
 import com.crypto.bot.dto.BotStatus;
 import com.crypto.bot.service.OperationService;
 import org.springframework.web.bind.annotation.GetMapping;

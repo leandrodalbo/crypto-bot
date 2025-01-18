@@ -2,16 +2,16 @@ spring:
   application:
     name: crypto-bot
 bot:
-  validationCron: "0 */5 * * * *"
-  newTradeCron: "0 */15 * * * *"
+  validationCron: "0 */5 * * * *"   #validate trade every five minutes
+  newTradeCron: "0 */15 * * * *"    #check to open a new trade every 15 minutes
 
 kraken:
   url: https://api.kraken.com
   key:
   secret:
-  candlesInterval: 60
+  candlesInterval: 60 #minutes
   candlesSince: 5
-  candlesSinceUnit: DAY
+  candlesSinceUnit: DAY #or minute
 
 indicator:
   bbPeriod: 20
@@ -24,11 +24,11 @@ indicator:
   obvPeriod: 14
 
 operation:
-  minutesLimit: 90
-  stop: 0.006
-  profit: 0.018
+  minutesLimit: 90 #trade open time limit
+  stop: 0.006    #stop loss
+  profit: 0.018  #take profit
   currency: ZUSD
-  notBelow: 500
+  notBelow: 500  #don't trade below
   pairs:
     XXLM: ZUSD
     XXRP: ZUSD

@@ -9,10 +9,10 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @SpringBootApplication
 @EnableScheduling
 @ConfigurationPropertiesScan
-public class KrakenBotApplication{
+public class BotApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(KrakenBotApplication.class, args);
+        SpringApplication.run(BotApplication.class, args);
     }
 
 }

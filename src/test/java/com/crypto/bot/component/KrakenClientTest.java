@@ -217,5 +217,4 @@ public class KrakenClientTest {
 
         assertThat(underTest.postingData(params)).isEqualTo(encoded);
     }
-
 }

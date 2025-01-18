@@ -1,5 +1,6 @@
 package com.crypto.bot.service;
 
+import com.crypto.bot.component.ApiClient;
 import com.crypto.bot.component.KrakenClient;
 import com.crypto.bot.component.TradeWrapper;
 import com.crypto.bot.props.OperationProps;
@@ -30,12 +31,12 @@ public class OperationService {
     private final Logger logger = LoggerFactory.getLogger(OperationService.class);
 
     private final OperationProps operationConf;
-    private final KrakenClient krakenClient;
+    private final ApiClient apiClient;
     private final TradeWrapper tradeWrapper;
 
     public OperationService(OperationProps operationConf, KrakenClient krakenClient, TradeWrapper tradeWrapper) {
         this.operationConf = operationConf;
-        this.krakenClient = krakenClient;
+        this.apiClient = krakenClient;
         this.tradeWrapper = tradeWrapper;
     }
 
@@ -46,24 +47,24 @@ public class OperationService {
                 .pairs()
                 .entrySet()
                 .stream().map(it -> new TradingPair(it.getKey(), it.getValue()))
-                .forEach(pair -> result.put(pair.key(), krakenClient.ohlcData(pair)));
+                .forEach(pair -> result.put(pair.key(), apiClient.ohlcData(pair)));
 
         return result;
     }
 
     public Balance getBalance() throws NoSuchAlgorithmException, InvalidKeyException {
-        return krakenClient.balance();
+        return apiClient.balance();
     }
 
     public List<AssetPrice> assetsPrice() {
         return this.operationConf
                 .pairs()
                 .entrySet()
-                .stream().map(it -> krakenClient.assetPrice(new TradingPair(it.getKey(), it.getValue()))).toList();
+                .stream().map(it -> apiClient.assetPrice(new TradingPair(it.getKey(), it.getValue()))).toList();
     }
 
     public void openTrade(String pairKey) throws NoSuchAlgorithmException, InvalidKeyException {
-        Balance balance = krakenClient.balance();
+        Balance balance = apiClient.balance();
 
         Double usdBalance = balance.formattedValuesMap().get(this.operationConf.currency());
         Double notBelow = this.operationConf.formattedNotBelow();
@@ -79,11 +80,11 @@ public class OperationService {
         TradingPair pair = new TradingPair(pairKey, this.operationConf.pairs().get(pairKey));
 
         if (tradeWrapper.canTrade() && usdBalance.doubleValue() > notBelow.doubleValue()) {
-            AssetPrice assetPrice = krakenClient.assetPrice(pair);
+            AssetPrice assetPrice = apiClient.assetPrice(pair);
             double canbuy = botFormatDouble(usdBalance / assetPrice.formattedUSD());
             double volume = canbuy - (canbuy * 0.10);
 
-            if (krakenClient.postOrder(pair, volume, BuySell.buy)) {
+            if (apiClient.postOrder(pair, volume, BuySell.buy)) {
 
                 double stopLoss = (assetPrice.formattedUSD() * (1 - this.operationConf.formattedStop()));
                 double takeProfit = (assetPrice.formattedUSD() * (1 + this.operationConf.formattedProfit()));
@@ -100,14 +101,14 @@ public class OperationService {
 
     public void closeTrade() throws NoSuchAlgorithmException, InvalidKeyException {
         if (!tradeWrapper.canTrade()) {
-            Balance balance = krakenClient.balance();
+            Balance balance = apiClient.balance();
             Trade trade = tradeWrapper.getTrade().get();
 
             double volume = balance.formattedValuesMap().get(trade.pair().key());
 
             logger.info(String.format("Closing Trade: %s", trade.pair().key()));
 
-            if (krakenClient.postOrder(trade.pair(), volume, BuySell.sell)) {
+            if (apiClient.postOrder(trade.pair(), volume, BuySell.sell)) {
                 tradeWrapper.setTrade(Optional.empty());
             } else {
                 logger.warn(String.format("Failed to close trade for: %s", trade.pair()));
@@ -119,7 +120,7 @@ public class OperationService {
         if (!tradeWrapper.canTrade()) {
             Trade trade = tradeWrapper.getTrade().get();
             long limit = Instant.now().minus(this.operationConf.minutesLimit(), ChronoUnit.MINUTES).toEpochMilli();
-            AssetPrice assetPrice = krakenClient.assetPrice(trade.pair());
+            AssetPrice assetPrice = apiClient.assetPrice(trade.pair());
 
             if ((trade.timestamp() < limit) || (assetPrice.formattedUSD() <= trade.formattedStop()) || (assetPrice.formattedUSD() >= trade.formattedProfit())) {
                 closeTrade();
@@ -135,5 +136,4 @@ public class OperationService {
     public boolean canOperate() {
         return tradeWrapper.canTrade();
     }
-
 }
