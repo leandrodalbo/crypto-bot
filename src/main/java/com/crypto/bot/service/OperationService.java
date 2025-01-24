@@ -81,8 +81,8 @@ public class OperationService {
 
         if (tradeWrapper.canTrade() && usdBalance.doubleValue() > notBelow.doubleValue()) {
             AssetPrice assetPrice = apiClient.assetPrice(pair);
-            double canbuy = botFormatDouble(usdBalance / assetPrice.formattedUSD());
-            double volume = canbuy - (canbuy * 0.10);
+            double canBuy = botFormatDouble(usdBalance / assetPrice.formattedUSD());
+            double volume = (canBuy - canBuy * operationConf.operationFee());
 
             if (apiClient.postOrder(pair, volume, BuySell.buy)) {
 
@@ -106,11 +106,13 @@ public class OperationService {
 
             logger.info(String.format("Closing Trade: %s", trade.pair().key()));
 
-            Double volume = balance.formattedValuesMap().get(trade.pair().key());
+            Double actualBalance = balance.formattedValuesMap().get(trade.pair().key());
 
-            if (volume == null) {
+            if (actualBalance == null) {
                 logger.warn(String.format("Failed to obtain balance volume for %s", trade.pair().key()));
             } else {
+
+                double volume = (actualBalance - actualBalance * operationConf.operationFee());
 
                 if (apiClient.postOrder(trade.pair(), volume, BuySell.sell)) {
                     tradeWrapper.setTrade(Optional.empty());
